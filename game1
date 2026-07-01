@@ -1,1 +1,156 @@
+import pygame
+import random
+import sys
 
+# --- ตั้งค่าเริ่มต้น ---
+pygame.init()
+WIDTH, HEIGHT = 800, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("🦖 Modern Dino Jump Adventure")
+clock = pygame.time.Clock()
+
+# --- สีสันสไตล์ Modern Cyberpunk / Neon ---
+BG_COLOR = (18, 18, 24)       # สีพื้นหลังมืดสนิทสไตล์โมเดิร์น
+DINO_COLOR = (57, 255, 20)    # สีเขียวสะท้อนแสง (Neon Green)
+CACTUS_COLOR = (255, 7, 58)   # สีแดงนีออน (Neon Red)
+GROUND_COLOR = (0, 245, 255)  # สีฟ้าไซอัน (Neon Cyan)
+TEXT_COLOR = (255, 255, 255)  # สีขาว
+
+# --- ตัวแปรสำหรับฟอนต์ ---
+try:
+    font_score = pygame.font.SysFont("Helvetica", 24, bold=True)
+    font_gameover = pygame.font.SysFont("Helvetica", 50, bold=True)
+except:
+    font_score = pygame.font.Font(None, 30)
+    font_gameover = pygame.font.Font(None, 60)
+
+class Dinosaur:
+    def __init__(self):
+        self.x = 80
+        self.y = 300
+        self.width = 40
+        self.height = 50
+        self.is_jumping = False
+        self.jump_speed = 16
+        self.gravity = 1.0
+        self.velocity = 0
+
+    def handle_input(self):
+        keys = pygame.key.get_pressed()
+        if (keys[pygame.K_SPACE] or keys[pygame.K_UP]) and not self.is_jumping:
+            self.is_jumping = True
+            self.velocity = -self.jump_speed
+
+    def update(self):
+        if self.is_jumping:
+            self.velocity += self.gravity
+            self.y += self.velocity
+            
+            # เมื่อตกลงมากระทบพื้น
+            if self.y >= 300:
+                self.y = 300
+                self.is_jumping = False
+                self.velocity = 0
+
+    def draw(self, surface):
+        # วาดไดโนเสาร์ด้วยรูปทรงมน (Smooth Capsule Shape)
+        pygame.draw.rect(surface, DINO_COLOR, (self.x, self.y, self.width, self.height), border_radius=12)
+        # เติมตาให้ไดโนเสาร์ดูน่ารักขึ้น
+        pygame.draw.circle(surface, BG_COLOR, (self.x + 28, self.y + 15), 4)
+
+class Cactus:
+    def __init__(self, speed):
+        self.width = random.choice([25, 35, 45])  # สุ่มความกว้างสิ่งกีดขวาง
+        self.height = random.randint(40, 70)       # สุ่มความสูง
+        self.x = WIDTH + random.randint(0, 300)
+        self.y = 350 - self.height
+        self.speed = speed
+
+    def update(self):
+        self.x -= self.speed
+
+    def draw(self, surface):
+        # วาดสิ่งกีดขวางทรงมนสไตล์นีออน
+        pygame.draw.rect(surface, CACTUS_COLOR, (self.x, self.y, self.width, self.height), border_radius=8)
+
+def main():
+    dino = Dinosaur()
+    obstacles = []
+    spawn_timer = 0
+    game_speed = 7
+    score = 0
+    game_over = False
+
+    while True:
+        # --- ตรวจจับ Event การกดปิดโปรแกรม ---
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r and game_over:
+                    # รีสตาร์ทเกมใหม่
+                    main()
+
+        if not game_over:
+            # --- อัปเดตสถานะตัวละคร ---
+            dino.handle_input()
+            dino.update()
+
+            # --- เพิ่มความยากของเกมตามคะแนน ---
+            game_speed = 7 + (score // 500)
+
+            # --- ระบบเกิดของสิ่งกีดขวาง (Cactus) ---
+            spawn_timer += 1
+            if spawn_timer > random.randint(60, 100):
+                if len(obstacles) < 3: # จำกัดไม่ให้โผล่มาติดกันเกินไป
+                    obstacles.append(Cactus(game_speed))
+                spawn_timer = 0
+
+            # --- อัปเดตและเช็คชนสิ่งกีดขวาง ---
+            for obstacle in obstacles[:]:
+                obstacle.update()
+                
+                # ลบวัตถุที่หลุดขอบหน้าจอ และเพิ่มคะแนน
+                if obstacle.x + obstacle.width < 0:
+                    obstacles.remove(obstacle)
+                    score += 100
+                
+                # ตรวจสอบการชน (Collision Detection)
+                dino_rect = pygame.Rect(dino.x, dino.y, dino.width, dino.height)
+                obs_rect = pygame.Rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height)
+                if dino_rect.colliderect(obs_rect):
+                    game_over = True
+
+            # คะแนนเพิ่มขึ้นเรื่อยๆ ตามเวลาที่รอดชีวิต
+            score += 1
+
+        # --- ส่วนการวาดภาพกราฟิก (Render GUI) ---
+        screen.fill(BG_COLOR)
+
+        # วาดเส้นพื้นเกมแบบนีออนเรืองแสง
+        pygame.draw.line(screen, GROUND_COLOR, (0, 350), (WIDTH, 350), 4)
+
+        # วาดตัวละครและอุปสรรค
+        dino.draw(screen)
+        for obstacle in obstacles:
+            obstacle.draw(screen)
+
+        # แสดงคะแนน ปรับความสว่างให้ดูโมเดิร์น
+        score_text = font_score.render(f"SCORE: {score}", True, TEXT_COLOR)
+        screen.blit(score_text, (20, 20))
+
+        # หาก Game Over ให้แสดงหน้าจอจบเกม
+        if game_over:
+            over_text = font_gameover.render("GAME OVER", True, CACTUS_COLOR)
+            retry_text = font_score.render("Press 'R' to Restart Adventure", True, TEXT_COLOR)
+            
+            # วาดข้อความให้อยู่กึ่งกลางหน้าจอพอดี
+            screen.blit(over_text, (WIDTH//2 - over_text.get_width()//2, HEIGHT//3))
+            screen.blit(retry_text, (WIDTH//2 - retry_text.get_width()//2, HEIGHT//2))
+
+        pygame.display.flip()
+        clock.tick(60) # ล็อกเฟรมเรตไว้ที่ 60 FPS เพื่อความลื่นไหล
+
+if __name__ == "__main__":
+    main()
