@@ -1,0 +1,129 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# กำหนดขนาดหน้าต่างรูปภาพ
+fig, axs = plt.subplots(3, 3, figsize=(15, 12))
+
+# กำหนด Main Title ให้กับทั้ง Figure
+fig.suptitle('my first chart', fontsize=20, fontweight='bold')
+
+# ----------------------------------------------------
+# กราฟที่ 1 (แถว 1, คอลัมน์ 1): Scatter Plot
+# ----------------------------------------------------
+x1_a = np.array([5, 7, 8, 7, 2, 17, 2, 9, 4, 11, 12, 9, 6])
+y1_a = np.array([99, 86, 87, 88, 111, 86, 103, 87, 94, 78, 77, 85, 86])
+x1_b = np.array([2, 2, 8, 1, 15, 8, 12, 9, 7, 3, 11, 4, 7, 14, 12])
+y1_b = np.array([100, 105, 84, 105, 90, 99, 90, 95, 94, 100, 79, 112, 91, 80, 85])
+
+axs[0, 0].scatter(x1_a, y1_a, color='hotpink', label='Group A')
+axs[0, 0].scatter(x1_b, y1_b, color='#88c999', label='Group B')
+axs[0, 0].set_title("Scatter Comparison")
+axs[0, 0].set_xlabel("X-Axis")
+axs[0, 0].set_ylabel("Y-Axis")
+axs[0, 0].legend()
+
+# ----------------------------------------------------
+# กราฟที่ 2 (แถว 1, คอลัมน์ 2): Scatter with Big Circles/Colors (อันที่ขาดไป)
+# ----------------------------------------------------
+x2 = np.array([5, 7, 8, 7, 2, 17, 2, 9, 4, 11, 12, 9, 6])
+y2 = np.array([99, 86, 87, 88, 111, 86, 103, 87, 94, 78, 77, 85, 86])
+sizes = np.array([20, 50, 100, 200, 500, 1000, 60, 90, 120, 300, 600, 80, 75])
+colors = np.array([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 55, 65])
+
+scatter2 = axs[0, 1].scatter(x2, y2, c=colors, s=sizes, alpha=0.5, cmap='nipy_spectral', label='Data Points')
+axs[0, 1].set_title("Big Bubble Scatter")
+axs[0, 1].set_xlabel("X Value")
+axs[0, 1].set_ylabel("Y Value")
+axs[0, 1].legend()
+
+# ----------------------------------------------------
+# กราฟที่ 3 (แถว 1, คอลัมน์ 3): Horizontal Bar Chart
+# ----------------------------------------------------
+x3 = np.array(["A", "B", "C", "D"])
+y3 = np.array([3, 8, 1, 10])
+
+axs[0, 2].barh(x3, y3, color='forestgreen', label='Categories')
+axs[0, 2].set_title("Horizontal Bar Chart")
+axs[0, 2].set_xlabel("Value")
+axs[0, 2].set_ylabel("Category")
+axs[0, 2].legend()
+
+# ----------------------------------------------------
+# กราฟที่ 4 (แถว 2, คอลัมน์ 1): Line Chart with Grid (Sports Watch Data)
+# ----------------------------------------------------
+x4 = np.array([80, 85, 90, 95, 100, 105, 110, 115, 120, 125])
+y4 = np.array([240, 250, 260, 270, 280, 290, 300, 310, 320, 330])
+
+axs[1, 0].plot(x4, y4, color='green', label='Pulse Rate')
+axs[1, 0].set_title("Sports Watch Data")
+axs[1, 0].set_xlabel("Average Pulse")
+axs[1, 0].set_ylabel("Calorie Burnage")
+axs[1, 0].grid(color='green', linestyle='--', linewidth=0.5)
+axs[1, 0].legend()
+
+# ----------------------------------------------------
+# กราฟที่ 5 (แถว 2, คอลัมน์ 2): Multi-line Plot
+# ----------------------------------------------------
+x5_1 = np.array([0, 1, 2, 3])
+y5_1 = np.array([3, 8, 1, 10])
+x5_2 = np.array([0, 1, 2, 3])
+y5_2 = np.array([6, 2, 7, 11])
+
+axs[1, 1].plot(x5_1, y5_1, label='Line 1', color='green')
+axs[1, 1].plot(x5_2, y5_2, label='Line 2', color='olivedrab')
+axs[1, 1].set_title("Multiple Lines Chart")
+axs[1, 1].set_xlabel("X Axis")
+axs[1, 1].set_ylabel("Y Axis")
+axs[1, 1].legend()
+
+# ----------------------------------------------------
+# กราฟที่ 6 (แถว 2, คอลัมน์ 3): Line Plot with Big Markers
+# ----------------------------------------------------
+ypoints6 = np.array([3, 8, 1, 10])
+
+axs[1, 2].plot(ypoints6, marker='o', ms=15, mec='darkgreen', mfc='darkgreen', color='green', label='Points')
+axs[1, 2].set_title("Line with Large Markers")
+axs[1, 2].set_xlabel("Index")
+axs[1, 2].set_ylabel("Value")
+axs[1, 2].legend()
+
+# ----------------------------------------------------
+# กราฟที่ 7 (แถว 3, คอลัมน์ 1): Histogram
+# ----------------------------------------------------
+np.random.seed(42)
+x7 = np.random.normal(170, 10, 250)
+
+axs[2, 0].hist(x7, color='seagreen', edgecolor='black', label='Height Dist')
+axs[2, 0].set_title("Height Histogram")
+axs[2, 0].set_xlabel("Height (cm)")
+axs[2, 0].set_ylabel("Frequency")
+axs[2, 0].legend()
+
+# ----------------------------------------------------
+# กราฟที่ 8 (แถว 3, คอลัมน์ 2): Standard Pie Chart
+# ----------------------------------------------------
+y8 = np.array([35, 25, 25, 15])
+mylabels8 = ["Apples", "Bananas", "Cherries", "Dates"]
+colors8 = ['#4CAF50', '#8BC34A', '#CDDC39', '#2E7D32']
+
+axs[2, 1].pie(y8, labels=mylabels8, colors=colors8, autopct='%1.1f%%')
+axs[2, 1].set_title("Fruits Pie Chart")
+# Note: Pie Charts do not have traditional X/Y axes, so set title/labels as needed.
+axs[2, 1].legend(loc="lower right")
+
+# ----------------------------------------------------
+# กราฟที่ 9 (แถว 3, คอลัมน์ 3): Pie Chart with Explode
+# ----------------------------------------------------
+y9 = np.array([35, 25, 25, 15])
+mylabels9 = ["Apples", "Bananas", "Cherries", "Dates"]
+myexplode9 = [0.2, 0, 0, 0]
+
+axs[2, 2].pie(y9, labels=mylabels9, explode=myexplode9, colors=colors8, autopct='%1.1f%%')
+axs[2, 2].set_title("Exploded Pie Chart")
+axs[2, 2].legend(loc="lower right")
+
+# จัดระยะห่างระหว่างกราฟ
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+# แสดงผลกราฟ
+plt.show()
