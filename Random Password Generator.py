@@ -1,0 +1,45 @@
+import random
+import tkinter as tk
+
+
+def lottery():
+    first.config(text=f"{random.randint(0, 999999):06d}")
+    front.config(
+        text=f"{random.randint(0, 999):03d}   {random.randint(0, 999):03d}"
+    )
+    back3.config(
+        text=f"{random.randint(0, 999):03d}   {random.randint(0, 999):03d}"
+    )
+    back2.config(text=f"{random.randint(0, 99):02d}")
+
+
+app = tk.Tk()
+app.title("โปรแกรมสุ่มตัวเลข")
+app.geometry("300x320")
+
+tk.Label(app, text="โปรแกรมสุ่มตัวเลข", font=("Arial", 14, "bold")).pack(
+    pady=5
+)
+
+tk.Label(app, text="รางวัลที่ 1").pack()
+first = tk.Label(app, text="------", font=("Arial", 18), fg="red")
+first.pack()
+
+tk.Label(app, text="เลขหน้า 3 ตัว").pack()
+front = tk.Label(app, text="---   ---", font=("Arial", 14))
+front.pack()
+
+tk.Label(app, text="เลขท้าย 3 ตัว").pack()
+back3 = tk.Label(app, text="---   ---", font=("Arial", 14))
+back3.pack()
+
+tk.Label(app, text="เลขท้าย 2 ตัว").pack()
+back2 = tk.Label(app, text="--", font=("Arial", 16))
+back2.pack()
+
+# แก้ไขจุดที่ผิดพลาดตรงนี้ (ใส่ตัวเลขให้ pady และเพิ่ม app.mainloop())
+tk.Button(app, text="สุ่มเลข", command=lottery, font=("Arial", 12)).pack(
+    pady=10
+)
+
+app.mainloop()
